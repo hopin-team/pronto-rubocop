@@ -42,7 +42,7 @@ module Pronto
       end
 
       def corrections_count
-        @corrections_count ||= corrector.corrections.count
+        @corrections_count ||= corrector.corrections.concat([]).count
       end
 
       def differing_lines_count
@@ -63,14 +63,14 @@ module Pronto
               ::RuboCop::Cop::Registry.new([cop]),
               patch_cop.rubocop_config,
               auto_correct: true,
-              stdin: true,
+              stdin: true
             )
           else
             ::RuboCop::Cop::Team.new(
               ::RuboCop::Cop::Registry.new([cop]),
               patch_cop.rubocop_config,
               auto_correct: true,
-              stdin: true,
+              stdin: true
             )
           end
       end
@@ -82,7 +82,7 @@ module Pronto
       def corrector
         @corrector ||= begin
           autocorrect_team.inspect_file(processed_source)
-          corrector = RuboCop::Cop::Corrector.new(processed_source.buffer)
+          corrector = RuboCop::Cop::Legacy::Corrector.new(processed_source.buffer)
           corrector.corrections.concat(autocorrect_team.cops.first.corrections)
           corrector
         end
